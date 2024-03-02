@@ -4,15 +4,25 @@ SemEval 2024 Task 2: Safe Biomedical Natural Language Inference for Clinical Tri
 
 # Content
 ├── dataset (SemEval Dataset for local use as submodule)
+
 ├── presentations (Presentations held during Semester)
+
 ├── lightning_logs (All log data of the Runs)
+
 ├── paper
+
 ├── requirements.txt (Python libaries)
+
 ├── SemEval_2024_Task_2_new.ipynb (Project/Implementaion)
+
 ├── show_tensorboard_logs.ipynb (Plotter for Results)
+
 ├── README.md
+
 ├── LICENSE
+
 ├── .gitmodules
+
 └── .gitignore
 
 
