@@ -1,0 +1,81 @@
+\section{Datasets}\label{sec:dataset}
+
+A group of four domain experts, including clinical trial organizers from the Manchester Cancer Institute and the 
+Digital Experimental Cancer Medicine Team (DECMT), participated in an annotation task to generate entailment and contradiction 
+statements for Clinical Trial Reports (CTR). Annotators were tasked with generating non-trivial statements about the contents of primary and 
+secondary trials, encouraging understanding and reasoning. Each CTR was divided into four sections representing facts, and 
+evidence supporting the labeled statement was selected from these facts. In cases of negation, the full CTR section was 
+provided as evidence. A negative rewriting strategy was employed to create contradictory statements, and evidence contradicting 
+these statements was collected \cite{jullien_semeval-2023_nodate} \cite{noauthor_nli4ct_nodate}.
+
+Each Datapoint in the Training and Development Set have a statement, label being either Entangled or Contradiction, and one or two Prompts being
+one of four different CTR sections Adverse Events, Eligibility, Intervention or Results (Table~\ref{tab:ds-example}). 
+60\% of the Dataset are single type, which has only the Primary Prompt and the other 40\% are comparison 
+type has Primary and Secondary Prompt \cite{noauthor_nli4ct_nodate}\cite{jullien_nli4ct_2023}\cite{jullien_semeval-2023_nodate}.
+The SemEval task 2 dataset consists of 1700 training and 200 development samples (Table~\ref{tab:ds-distribution}),
+distributed equally betwwen the two labels and almost for the 4 kinds of CTR sections. We use the development samples
+as validation.
+
+\begin{table}[!h]
+    \centering
+    \caption{Two Example Clinical Trial Report taken out of the Dataset to represent the two types Comparison and Single.
+             Each Sample has a Statement, Label, the Relevant Section and one or two Premises.}
+    \label{tab:ds-example}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l||c|l|l|}
+    \hline
+    Type            & Short                                                         & Comparison                                                                                                                                                                                                                                                                                                                                                                            & Single                                                                                                                                                                                                                                                                                                                                                         \\ \hline\hline
+    Label           &                                                               & Entailment                                                                                                                                                                                                                                                                                                                                                                            & Contradiction                                                                                                                                                                                                                                                                                                                                                  \\ \hline
+    \textcolor{red}{Statement}       & \textcolor{red}{stm}                                                           & \textcolor{red}{\begin{tabular}[c]{@{}l@{}}The primary trial and the secondary \\ trial both used MRI for their interventions.\end{tabular}}                                                                                                                                                                                                                                                           & \textcolor{red}{\begin{tabular}[c]{@{}l@{}}More than 1/3 of patients in cohort 1 of the\\ primary trial experienced an adverse event.\end{tabular}}                                                                                                                                                                                                                             \\ \hline
+    \textcolor{green}{Section}         & \textcolor{green}{sec}                                                           & \textcolor{green}{Intervention}                                                                                                                                                                                                                                                                                                                                                                          & \textcolor{green}{Adverse Events}                                                                                                                                                                                                                                                                                                                                                 \\ \hline
+    \textcolor{blue}{Primary Trial}   & \textcolor{blue}{\begin{tabular}[c]{@{}l@{}}$p_1$\\ $p_2$\\ $...$\end{tabular}} & \textcolor{blue}{\begin{tabular}[c]{@{}l@{}}INTERVENTION 1:\\ •  Letrozole, Breast Enhancement, Safety\\ • Single arm of healthy postmenopausal women to \\    have two breast MRI (baseline and post-treatment). \\    Letrozole of 12.5 mg/day is given for three successive \\    days just prior to the second MRI.\\ • ...\end{tabular}}                                                           & \textcolor{blue}{\begin{tabular}[c]{@{}l@{}}Adverse Events 1:\\ •  Total: 69/258 (26.74\%)\\ •  Anaemia 3/258 (1.16\%)\\ •  Febrile neutropenia 13/258 (5.04\%)\\  •  Neutropenia 5/258 (1.94\%)\\  • ...\\ Adverse Events 2:\\ •  Mitral valve incompetence 0/224 (0.00\%)\\ •  Pericardial effusion 2/224 (0.89\%)\\ •  Sinus tachycardia 1/224 (0.45\%)\\ • ...\end{tabular}} \\ \hline
+    \textcolor{blue}{Secondary Trial} & \textcolor{blue}{\begin{tabular}[c]{@{}l@{}}$s_1$\\ $s_2$\\ $...$\end{tabular}} & \textcolor{blue}{\begin{tabular}[c]{@{}l@{}}INTERVENTION 1: \\ •  Healthy Volunteers\\ • Healthy women will be screened for \\    Magnetic Resonance Imaging (MRI)  contraindications, \\    and then undergo contrast injection, and SWIFT acquisition.\\ •  Magnetic resonance imaging: Patients and healthy volunteers \\    will be first screened for MRI contraindications.\\ • ...\end{tabular}} &                                                                                                                                                                                                                                                                                                                                                                \\ \hline
+    \end{tabular}%
+    }
+\end{table}
+
+
+\begin{table}[!h]
+    \centering
+    \caption{Section and Label Distribution of the Dataset}
+    \label{tab:ds-distribution}
+    \begin{tabular}{|c|c||cccc|c|c|}
+    \hline
+    \multirow{2}{*}{Dataset} & \multirow{2}{*}{Label} & \multicolumn{4}{c|}{Section} & \multirow{2}{*}{$\Sigma$} & \multirow{2}{*}{Total} \\
+                           &               & Adverse Events & Eligibility & Intervention & Results &     &                       \\ \hline\hline
+    \multirow{2}{*}{train} & Contradiction & 238            & 241         & 196          & 175     & 850 & \multirow{2}{*}{1700} \\
+                           & Entailment    & 258            & 245         & 200          & 147     & 850 &                       \\ \hline
+    \multirow{2}{*}{valid} & Contradiction & 26             & 28          & 18           & 28      & 100 & \multirow{2}{*}{200}  \\
+                           & Entailment    & 26             & 28          & 18           & 28      & 100 &                       \\ \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+
+
+For our further proceeding we concatenate the parts of a dataset sample as followed in Equation~\ref{eq:ds-sentence}.
+The single Type, where there is no Second Trial (see Table~\ref{tab:ds-example}), $s_1, s_2, ... $
+is empty so the remaining are only the two $[SEP]$ tokens and for Comparison Type are all elements given.
+
+\begin{equation}\label{eq:ds-sentence}
+\resizebox{0.91\hsize}{!}{%
+ $Sentence = [CLS] \; \textcolor{red}{stm}\;
+             [SEP] \; \textcolor{green}{sec}\;
+             [SEP] \; \textcolor{blue}{p_1, p_2, ... }\;
+             [SEP] \; \textcolor{blue}{s_1, s_2, ... }\;
+             [SEP]$      
+}
+\end{equation}
+
+As our base Model for our Experiments is BERT and the respective Tokenizer uses $512$ token, to encode the Sentence, 
+we have analyzed the length Distribution in a Histogram (see Figure~\ref{cap:hist}). 
+Round about 70\% of all Training and Validation Datapoints are in the range of the $512$ token length. 
+Visible is also the slight shift on the $x$-Axis in the tokenized form, since not every word can have a single token
+representing it.
+
+\begin{figure}[!htb]
+    \hspace*{-4.5cm}
+    \centering
+    \includesvg[inkscapelatex=false, width=1.75\textwidth]{./content/histogram}
+    \caption{Histogram of Number of Words from the full Sentence and the tokenized version with BertTokenizer}\label{cap:hist}
+\end{figure}

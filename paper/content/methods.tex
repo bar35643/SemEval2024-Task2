@@ -1,0 +1,157 @@
+\section{Methods}\label{sec:methods}
+In this chapter we are clarifying the Loss and Metric Functions, the Architecture BERT used for our Experiments, Ideas principles like Adapter Tuning and
+Sentence Embedding and how fusing different Dataset together works, which are used in training loop.
+
+
+\subsection{BERT}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.33]{./content/BERT_Architecture.png}
+    \caption{Bidirectional Encoder Representations from Transformers (BERT) 
+             scematic View \cite{devlin_bert_2019}.}
+    \label{tab:bert}
+\end{figure}
+
+The Experiments are using BERT, Bidirectional Encoder Representations from Transformers (see Fig.~\ref{tab:bert}) ~\cite{devlin_bert_2019} 
+developed by Google is based on Transformer architecture introduced by Vaswani et. al. \cite{vaswani_attention_2023}.
+Unlike previous attempts, that process text in a unidirectional way (either left to right or right to 
+left), BERT is designed to understand context bidirectionally as every Token is connected Pathways with every other. A masked language model (MLM) 
+pre-training target is used, where tokens are randomly masked from the input to predict the original 
+vocabulary IDs.
+The model can be fine-tuned for specific downstream tasks, such as classification or translation. 
+BERT is available in different sizes like BERT-Base and BERT-Large. There are various implementations 
+such as RoBERTa~\cite{liu_roberta_2019}, ALBERT~\cite{lan_albert_2020}, BART~\cite{lewis_bart_2020}, 
+DeBERTa~\cite{he_deberta_2021}, which improves BERT architecture differently.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Sentence Embedding Architectures}
+\textcolor{red}{TODO}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Adapter Tuning}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.2]{./content/Adapter_Architecture.png}
+    \caption{Basic Structure of Adapter built on top of a Models Architecture, where only the Adapter Layers Parameters are trainable \cite{zheng_learn_2023}.}
+    \label{tab:bert}
+\end{figure}
+
+Adapter Tuning is a supervised method, where input, gold label are given and the models parameters are frozen, 
+but adding new fully trainable bottleneck feed-forward networks 
+on each intermediate layer. The objective is to reduce the size of trainable parameters, 
+to gain higher throughput and keeping the pre-trained embeddings\cite{zheng_learn_2023} \cite{naveed_comprehensive_2023}. 
+The ultimate goal of adaptation training is to enhance the model's scores on the downstream task, 
+while still benefiting from the broad language understanding gained during the initial 
+pre-training \cite{manjavacas_adapting_2022}. The effectiveness of adaptation-tuning depends on 
+the similarity between the pre-training task and the target task due to fixed embeddings.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Fusing different Datasets/Loaders}
+\begin{figure}[h]
+    \centering
+    \resizebox{\textwidth}{!}{\input{./content/test.tikz}}
+    \caption{Combined Dataset and Combined Loader Strategy where 4 different Dataset are getting mixed together.
+             On the Loader-Level for a Batch size of 16, every Dataset is present equally and on the
+             Dataset-Level, they are concatenated and the mixed.}\label{fig:test}
+\end{figure}
+Normally a Pre-Trained Model is used which is then fine-tuned on the Specific Dataset. The same can be applied to
+Text Classification. Therefore the Model is performing only on SemEval very good, while mismatching on generalization
+on other Text Classification Tasks. To Compensate, two strategies are applied to solve this.
+CombinedLoaders is a strategy, where each Dataset, on which the Model should perform, can contribute equally with
+the same amount of Datapoints. Another strategy involves the concatenation of all these Datasets to one and then being
+mixed on the Training. For our Example (see Chapter~\ref{ch:ds}) we are using SNLI \cite{noauthor_snli_2023}
+which has short sencences for entailment check, Healthver \cite{noauthor_dwaddenhealthver_entailment_nodate} a Dataset on the medical domain and
+scifact \cite{noauthor_allenaiscifact_entailment_nodate} on the scientific domain, to check the entailment of claim, 
+paper title and abstract. The Evaluation of the Strategies is only applied to SemEval Task Development
+Dataset not on the choosen ones for expanding. Also the expected outcome should be lower than the
+specialized Model on SemEval as it has to generalize the different domains more.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Loss Functions and Evaluation Metric}
+We are using 3 commonly used Loss functions for our Training of the different
+Architectures with $x$ being the Prediction and $y$ being the searched Class. For direct Classification, 
+CrossEntropyLoss~\ref{eq:ce} is the commonly and most frequently used function. Secondly, as we see later,
+combined with Cosine Simmilarity, we are using MSELoss~\ref{eq:mse} or CosineEmbeddingLoss~\ref{eq:ceb}
+to maximize or minimize the distance between two representations. As Metric the SemEval Task uses F1 Score, which
+is the harmonic mean between precision and recall defined in Equation~\ref{eq:f} \cite{noauthor_nli4ct_nodate}.
+
+
+
+\begin{equation}\label{eq:ce}
+   Loss_{CE} = -\sum_{i=1}^My_{o,i}\log(x_{o,i})
+\end{equation}
+\begin{equation}\label{eq:mse}
+   Loss_{MSE} = \sum_{i=1}^{M}(x_i-y_i)^2
+\end{equation}
+
+\begin{equation}\label{eq:ceb}
+    Loss_{CEB} = \begin{cases}
+        1 - \cos(x_1, x_2),      &\text{if $y = +1$}\\
+        \max(0, \cos(x_1, x_2)), &\text{if $y = -1$}
+    \end{cases}
+\end{equation}
+
+\begin{equation}\label{eq:f}
+    F_1 = 2 \frac{precision \cdot recall}{precision + recall} = \frac{2 TP}{2TP + FP + FN}
+ \end{equation}
+
+

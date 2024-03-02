@@ -1,0 +1,206 @@
+\section{Experiments}\label{sec:experiments}
+
+\subsection{Environmental Setup}
+For our Experiments we are bounded by the Enviroments given from Kaggle \cite{noauthor_kaggle_nodate} and Colab \cite{noauthor_google_nodate}, 
+which makes quite complex to find the optimal hyperparameters. Also there is no possibility to Cache or Precalculate all the Datapoints of
+Training and Validation without running in to RAM issues. We decided to shift the bottelnecks either in parallel loading the
+Data and/or running in exceeding GPU RAM due to the amount of parameters.
+
+\vspace{0.3cm}
+
+\begin{minipage}{0.5\textwidth}
+    Colab's Environment:
+    \begin{itemize}
+        \item CPU: Intel(R) Xeon(R) @ 2.00GHz
+        \item Number of available Cores: 2
+        \item System Ram: 12 GB
+        \item GPU: Nvidia Tesla T4
+        \item GPU Ram: 15 GB
+        \item Time limit: 3-4 Hours a Day/Session
+    \end{itemize}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+    Kaggle's Environment:
+    \begin{itemize}
+        \item CPU: Intel(R) Xeon(R) @ 2.00GHz
+        \item Number of available Cores: 4
+        \item System Ram: 32 GB
+        \item GPU: Nvidia Tesla P100
+        \item GPU Ram: 16 GB
+        \item Time limit: 30 Hour a Week with 9h each Session
+    \end{itemize}
+\end{minipage}
+
+\vspace{0.3cm}
+
+The general handling of the loops is based on Pytorch \cite{noauthor_pytorch_nodate}, Lightning AI \cite{noauthor_lightning_nodate}
+implementation and for loading the pretrained BERT Model we are using Huggingface (transfromer libary) \cite{noauthor_hugging_2023}.
+Therefore, we can focus the Experiments on implementing strategies to enhance BERT's overall performance tested on four different Seeds.
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection{Learning Rate}
+Learning Rate, Token Length and Mixed-Precision
+
+\begin{table}[h]
+    \centering
+    \caption{F1 Values of the Baseline BertModelForSentenceClassification of the Last (50th) Epoch}
+    \label{tab:my-table}
+    \begin{tabular}{|c||cccc|c|}
+    \hline
+    \multicolumn{1}{|l||}{\multirow{2}{*}{Learning Rate}} & \multicolumn{4}{c|}{Seed}                                                                    & \multicolumn{1}{c|}{\multirow{2}{*}{mean $\pm$ std}} \\ \cline{2-5}
+    \multicolumn{1}{|l||}{}                               & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    & \multicolumn{1}{c|}{}                                \\ \hline\hline
+    3e-6                                                 & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.554} & \multicolumn{1}{c|}{0.663} & 0.652 & 0.614 $\pm$ 0.034                           \\ \hline
+    4e-6                                                 & \multicolumn{1}{c|}{0.589} & \multicolumn{1}{c|}{0.614} & \multicolumn{1}{c|}{0.649} & 0.615 & 0.616 $\pm$ 0.019                                    \\ \hline
+    5e-6                                                 & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026                                    \\ \hline
+    6e-6                                                 & \multicolumn{1}{c|}{0.661} & \multicolumn{1}{c|}{0.654} & \multicolumn{1}{c|}{0.602} & 0.647 & 0.640 $\pm$ 0.021                                    \\ \hline
+    7e-6                                                 & \multicolumn{1}{c|}{0.644} & \multicolumn{1}{c|}{0.578} & \multicolumn{1}{c|}{0.630} & 0.667 & 0.621 $\pm$ 0.040                                    \\ \hline
+    \end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection{Permutation}
+
+\begin{equation}
+    \resizebox{0.91\hsize}{!}{%
+     $Sentence = [CLS] \; \textcolor{red}{stm}\;
+                 [SEP] \; \textcolor{green}{sec}\;
+                 [SEP] \; \textcolor{blue}{\pi(p_1), \pi(p_2), ... }\;
+                 [SEP] \; \textcolor{blue}{\pi(s_1), \pi(s_2), ... }\;
+                 [SEP]$      
+    }
+\end{equation}
+
+\begin{table}[h]
+    \centering
+    \caption{F1 Values of the Permutation trial on the Baseline Model from the last (50th) Epoch}
+    \label{tab:my-table}
+    \begin{tabular}{|c|c||cccc|c|}
+    \hline
+    \multirow{2}{*}{Learning Rate} & \multirow{2}{*}{Permutation} & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{3-6}
+                                   &                              & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline \hline
+    \multirow{2}{*}{5e-6}          & No                           & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \cline{2-7} 
+                                   & Yes                          & \multicolumn{1}{c|}{0.633} & \multicolumn{1}{c|}{0.652} & \multicolumn{1}{c|}{0.620} & 0.643 & \textbf{0.643 $\pm$ 0.016}      \\ \hline
+    \end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection{Dataset Expansion}\label{ch:ds}
+
+\begin{table}[h]
+    \centering
+    \caption{F1 Values of the Dataset Test of Last (50th) Epoch}
+    \label{tab:my-table}
+    \begin{tabular}{|c|c||cccc|c|}
+    \hline
+    \multirow{2}{*}{Dataset + SemEval} & \multirow{2}{*}{Strategy} & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{3-6}
+                                       &                           & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
+    Baseline                           &                           & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline\hline
+    \multirow{2}{*}{SNLI}              & CombDL                    & \multicolumn{1}{c|}{0.597} & \multicolumn{1}{c|}{0.613} & \multicolumn{1}{c|}{0.663} & 0.573 & 0.617 $\pm$ 0.042               \\ \cline{2-7} 
+                                       & CombDS                    & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.669} & \multicolumn{1}{c|}{0.637} & 0.664 & 0.643 $\pm$ 0.019               \\ \hline
+    \multirow{2}{*}{HEALTHVER}         & CombDL                    & \multicolumn{1}{c|}{0.595} & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.602} & 0.522 & 0.620 $\pm$ 0.009               \\ \cline{2-7} 
+                                       & CombDS                    & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.621} & \multicolumn{1}{c|}{0.631} & 0.622 & 0.635 $\pm$ 0.017               \\ \hline
+    \multirow{2}{*}{SCIFACT}           & CombDL                    & \multicolumn{1}{c|}{0.586} & \multicolumn{1}{c|}{0.547} & \multicolumn{1}{c|}{0.602} & 0.561 & 0.574 $\pm$ 0.022               \\ \cline{2-7} 
+                                       & CombDS                    & \multicolumn{1}{c|}{0.687} & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.664} & 0.645 & 0.654 $\pm$ 0.025               \\ \hline\hline
+    
+    \multirow{2}{*}{SCIFACT,HEALTHVER} & CombDL                    & \multicolumn{1}{c|}{0.580} & \multicolumn{1}{c|}{0.564} & \multicolumn{1}{c|}{0.551} & 0.570 & 0.566 $\pm$ 0.010               \\ \cline{2-7} 
+                                       & CombDS                    & \multicolumn{1}{c|}{0.664} & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.657} & 0.649 & 0.652 $\pm$ 0.010               \\ \hline 
+    \multirow{2}{*}{SCIFACT,SNLI}      & CombDL                    & \multicolumn{1}{c|}{0.645} & \multicolumn{1}{c|}{0.607} & \multicolumn{1}{c|}{0.545} & 0.567 & 0.591 $\pm$ 0.039               \\ \cline{2-7} 
+                                       & CombDS                    & \multicolumn{1}{c|}{0.658} & \multicolumn{1}{c|}{0.574} & \multicolumn{1}{c|}{0.624} & 0.643 & 0.625 $\pm$ 0.032               \\ \hline 
+    \multirow{2}{*}{HEALTHVER,SNLI}    & CombDL                    & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & 0. & 0. $\pm$ 0.              \\ \cline{2-7} 
+                                       & CombDS                    & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & 0. & 0. $\pm$ 0.     \\ \hline 
+    
+    \end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection{Architecture}
+
+\begin{table}[h]
+    \centering
+    \caption{F1 Values of the Architecture Test from the Last (50th) Epoch}
+    \label{tab:my-table}
+    \begin{tabular}{|c|c||cccc|c|}
+    \hline
+    \multirow{2}{*}{Model} & \multirow{2}{*}{Desciption}                                                                       & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{3-6}
+                           &                                                                                                   & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
+    Baseline               & \begin{tabular}[c]{@{}c@{}}BertModelForSequenceClassification\\ and CrossEntropyLoss\end{tabular} & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline
+    v2                     & \begin{tabular}[c]{@{}c@{}}(u, v, x, y) as input to FFN\\ and CrossEntropyLoss\end{tabular}       & \multicolumn{1}{c|}{0.652} & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.629} & 0.664 & 0.635 $\pm$ 0.024               \\ \hline
+    v3                     & \begin{tabular}[c]{@{}c@{}}(u, v) as input to FNN\\ and CrossEntropyLoss\end{tabular}             & \multicolumn{1}{c|}{0.708} & \multicolumn{1}{c|}{0.583} & \multicolumn{1}{c|}{0.573} & 0.611 & 0.619 $\pm$ 0.054               \\ \hline
+    v4                     & \begin{tabular}[c]{@{}c@{}}(u, v, |u-v|) as input to FNN\\ and CrossEntropyLoss\end{tabular}      & \multicolumn{1}{c|}{0.638} & \multicolumn{1}{c|}{0.631} & \multicolumn{1}{c|}{0.618} & 0.640 & 0.632 $\pm$ 0.009               \\ \hline
+    v5                     & \begin{tabular}[c]{@{}c@{}}CosSim(u, v)\\ and CosineEmbeddingLoss\end{tabular}                    & \multicolumn{1}{c|}{0.614} & \multicolumn{1}{c|}{0.632} & \multicolumn{1}{c|}{0.637} & 0.664 & 0.630 $\pm$ 0.023               \\ \hline
+    v6                     & \begin{tabular}[c]{@{}c@{}}CosSim(u, v)\\ and MSELoss\end{tabular}                                & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.654} & \multicolumn{1}{c|}{0.667} & 0.646 & 0.664 $\pm$ 0.011               \\ \hline
+    \end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection{Adapter}
+
+
+\begin{table}[h]
+    \centering
+    \caption{F1 Values of the Adapter Trial from the Last (50th) Epoch}
+    \label{tab:my-table}
+    \begin{tabular}{|l||cccc|c|}
+    \hline
+    \multicolumn{1}{|c||}{\multirow{2}{*}{Model}} & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{2-5}
+    \multicolumn{1}{|c||}{}                       & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
+    Baseline BERT                                 & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline
+    Adapter BERT                                  & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.587} & \multicolumn{1}{c|}{0.602} & 0.626 & 0.608 $\pm$ 0.015               \\ \hline
+    Baseline SIMCSE                               & \multicolumn{1}{c|}{0.598} & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.696} & 0.640 & 0.650 $\pm$ 0.036               \\ \hline
+    Adapter SIMCSE                                & \multicolumn{1}{c|}{0.643} & \multicolumn{1}{c|}{0.673} & \multicolumn{1}{c|}{0.615} & 0.654 & 0.646 $\pm$ 0.021      \\ \hline
+    \end{tabular}
+\end{table}
+
