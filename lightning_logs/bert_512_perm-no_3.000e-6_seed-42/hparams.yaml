@@ -1,0 +1,8 @@
+batch_size: 16
+len_embeddings: 512
+lr: 3.0e-06
+model_name: bert-base-uncased
+num_labels: 2
+num_workers: 2
+permutate: false
+seed_val: 42

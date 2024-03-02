@@ -1,0 +1,13 @@
+batch_size: 16
+ds_names:
+- healthver
+- scifact
+len_embeddings: 512
+lr: 5.0e-06
+model_name: bert-base-uncased
+model_version: 1
+num_labels: 2
+num_workers: 4
+permutate: false
+seed_val: 1000000
+strategy: CombinedDataset

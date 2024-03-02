@@ -1,0 +1,11 @@
+batch_size: 16
+ds_names:
+- snli
+len_embeddings: 512
+lr: 5.0e-06
+model_name: bert-base-uncased
+num_labels: 2
+num_workers: 4
+permutate: false
+seed_val: 42
+strategy: CombinedDataset

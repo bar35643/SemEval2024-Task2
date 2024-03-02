@@ -1,0 +1,11 @@
+batch_size: 8
+ds_names: []
+len_embeddings: 512
+lr: 5.0e-06
+model_name: bert-base-uncased
+model_version: 11
+num_labels: 2
+num_workers: 4
+permutate: false
+seed_val: 0
+strategy: ''
