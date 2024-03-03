@@ -5,7 +5,7 @@
 
 % Node styles
 \tikzstyle{MatMul}=[fill=yellow, draw=black, shape=rectangle, minimum width=2cm]
-\tikzstyle{Linear}=[fill={rgb,255: red,0; green,221; blue,255}, draw=black, shape=rectangle]
+\tikzstyle{Linear}=[fill=cyan, draw=cyan, shape=rectangle]
 \tikzstyle{Scale}=[fill={rgb,255: red,191; green,255; blue,0}, draw=black, shape=rectangle]
 \tikzstyle{Circle}=[fill=white, draw=black, shape=circle, minimum size=6pt, inner sep=0pt]
 \tikzstyle{Softmax}=[fill={rgb,255: red,186; green,12; blue,255}, draw=black, shape=rectangle]
@@ -19,6 +19,7 @@
 \tikzstyle{1x1 v2}=[fill={rgb,255: red,191; green,255; blue,0}, draw={rgb,255: red,191; green,255; blue,0}, shape=circle, minimum size=1cm]
 \tikzstyle{1x1 v3}=[fill={rgb,255: red,255; green,128; blue,0}, draw={rgb,255: red,255; green,128; blue,0}, shape=circle, minimum size=1cm]
 \tikzstyle{1x1 v4}=[fill=magenta, draw=magenta, shape=circle, minimum size=1cm]
+\tikzstyle{rec}=[fill=cyan, draw=cyan, shape=rectangle, minimum width=2.5cm, minimum height=0.5cm]
 
 % Edge styles
 \tikzstyle{arrow}=[->, draw=black]

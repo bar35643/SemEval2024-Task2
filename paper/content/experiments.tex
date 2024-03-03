@@ -1,9 +1,9 @@
 \section{Experiments}\label{sec:experiments}
 
-\subsection{Environmental Setup}
-For our Experiments we are bounded by the Enviroments given from Kaggle \cite{noauthor_kaggle_nodate} and Colab \cite{noauthor_google_nodate}, 
-which makes quite complex to find the optimal hyperparameters. Also there is no possibility to Cache or Precalculate all the Datapoints of
-Training and Validation without running in to RAM issues. We decided to shift the bottelnecks either in parallel loading the
+\subsection{Environmental Setup}\label{ch:ev}
+For our Experiments we are bounded by the Environments given from Kaggle \cite{noauthor_kaggle_nodate} and Colab \cite{noauthor_google_nodate}, 
+which makes quite complex to find the optimal hyperparameter. Also, there is no possibility to Cache or Precalculate all the Datapoints of
+Training and Validation without running in to RAM issues. We decided to shift the bottlenecks either in parallel loading the
 Data and/or running in exceeding GPU RAM due to the amount of parameters.
 
 \vspace{0.3cm}
@@ -34,7 +34,7 @@ Data and/or running in exceeding GPU RAM due to the amount of parameters.
 \vspace{0.3cm}
 
 The general handling of the loops is based on Pytorch \cite{noauthor_pytorch_nodate}, Lightning AI \cite{noauthor_lightning_nodate}
-implementation and for loading the pretrained BERT Model we are using Huggingface (transfromer libary) \cite{noauthor_hugging_2023}.
+implementation and for loading the pre-trained BERT Model we are using Huggingface (transformer library) \cite{noauthor_hugging_2023}.
 Therefore, we can focus the Experiments on implementing strategies to enhance BERT's overall performance tested on four different Seeds.
 
 
@@ -49,21 +49,36 @@ Therefore, we can focus the Experiments on implementing strategies to enhance BE
 
 \newpage
 \subsection{Learning Rate}
-Learning Rate, Token Length and Mixed-Precision
+
+In the evaluation of the Baseline BertModelForSentenceClassification, different Learning-Rate 
+were tested, accompanied by variations in token size and the implementation of mixed precision.
+The tested Range of Learning-Rate (see Table~\ref{tab:my-lr}) going from $3e-6$ to $7e-6$. All above or
+below leading that the Model does not learn well or resulting in a rectangle graph, indicating
+that the gradients are too high or low. The best Learning Rate, based on the Seeds is $6e-6$ with
+$0.640 \pm 0.021$.
+
+However, it was observed that altering the token size and introducing mixed precision led to 
+the destruction of tensors within the model leading to re pre-train it whitin the Environment
+this is impossible. 
+This suggests potential challenges and limitations associated with modifying these parameters, 
+emphasizing the need for careful consideration and experimentation when adjusting 
+learning rates and employing mixed precision in the context of sentence classification 
+tasks using the BERT model.
 
 \begin{table}[h]
     \centering
-    \caption{F1 Values of the Baseline BertModelForSentenceClassification of the Last (50th) Epoch}
-    \label{tab:my-table}
+    \caption{F1 Values of the Baseline BertModelForSentenceClassification of the Last (50th) Epoch
+             for different Learning-Rates.}
+    \label{tab:my-lr}
     \begin{tabular}{|c||cccc|c|}
     \hline
     \multicolumn{1}{|l||}{\multirow{2}{*}{Learning Rate}} & \multicolumn{4}{c|}{Seed}                                                                    & \multicolumn{1}{c|}{\multirow{2}{*}{mean $\pm$ std}} \\ \cline{2-5}
     \multicolumn{1}{|l||}{}                               & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    & \multicolumn{1}{c|}{}                                \\ \hline\hline
-    3e-6                                                 & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.554} & \multicolumn{1}{c|}{0.663} & 0.652 & 0.614 $\pm$ 0.034                           \\ \hline
+    3e-6                                                 & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.554} & \multicolumn{1}{c|}{0.623} & 0.652 & 0.614 $\pm$ 0.034                           \\ \hline
     4e-6                                                 & \multicolumn{1}{c|}{0.589} & \multicolumn{1}{c|}{0.614} & \multicolumn{1}{c|}{0.649} & 0.615 & 0.616 $\pm$ 0.019                                    \\ \hline
     5e-6                                                 & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026                                    \\ \hline
-    6e-6                                                 & \multicolumn{1}{c|}{0.661} & \multicolumn{1}{c|}{0.654} & \multicolumn{1}{c|}{0.602} & 0.647 & 0.640 $\pm$ 0.021                                    \\ \hline
-    7e-6                                                 & \multicolumn{1}{c|}{0.644} & \multicolumn{1}{c|}{0.578} & \multicolumn{1}{c|}{0.630} & 0.667 & 0.621 $\pm$ 0.040                                    \\ \hline
+    6e-6                                                 & \multicolumn{1}{c|}{0.661} & \multicolumn{1}{c|}{0.654} & \multicolumn{1}{c|}{0.602} & 0.647 & \textbf{0.640 $\pm$ 0.021}                                    \\ \hline
+    7e-6                                                 & \multicolumn{1}{c|}{0.644} & \multicolumn{1}{c|}{0.563} & \multicolumn{1}{c|}{0.657} & 0.655 & 0.621 $\pm$ 0.040                                    \\ \hline
     \end{tabular}
 \end{table}
 
@@ -78,10 +93,18 @@ Learning Rate, Token Length and Mixed-Precision
 
 
 
-\newpage
 \subsection{Permutation}
+As described above changing Token size does lead to destroying the embeddings due to newly
+initializing and the fact that the maximum token size is 512, we come up with the idea
+of permuting the Primary and Secondary Trials (see Equation~\ref{eq:permutate}), which can be seen as list of items.
+The Target to analyze is if the order of the elements is relevant for deciding the Prediction, 
+wich should not be relevant due to BERT's Architecture, and
+if information after the cutpoint has interesting and relevant facts, which influences
+the decision making process. With no permutation the 
+Sentence is only 512 tokens long with the first-come-first-serve principle. Permutation on
+indicates that the order is not significant.
 
-\begin{equation}
+\begin{equation}\label{eq:permutate}
     \resizebox{0.91\hsize}{!}{%
      $Sentence = [CLS] \; \textcolor{red}{stm}\;
                  [SEP] \; \textcolor{green}{sec}\;
@@ -91,10 +114,15 @@ Learning Rate, Token Length and Mixed-Precision
     }
 \end{equation}
 
-\begin{table}[h]
+
+The Results (see Table~\ref{tab:my-permutation}) showed that there can be a slight Performance boost and the standard deviation is lower
+indicating that the fluctuation of different seeds in not that harsh. But, the Runtime cost of permuting the
+sentences every Batch is for the later Experiments too much. Therefore, we skip it to stay cost-efficient.
+
+\begin{table}[t]
     \centering
     \caption{F1 Values of the Permutation trial on the Baseline Model from the last (50th) Epoch}
-    \label{tab:my-table}
+    \label{tab:my-permutation}
     \begin{tabular}{|c|c||cccc|c|}
     \hline
     \multirow{2}{*}{Learning Rate} & \multirow{2}{*}{Permutation} & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{3-6}
@@ -117,35 +145,56 @@ Learning Rate, Token Length and Mixed-Precision
 
 
 
-\newpage
 \subsection{Dataset Expansion}\label{ch:ds}
 
-\begin{table}[h]
+We have tested the two Dataset Expansion Strategies CombinedLoader (CombDL) and CombinedDataset (CombDS)
+on two phases with the expasion Datasets SNLI, HEALTHVER and SCIFACT. The first Stage 
+is combining one Dataset with SemEval Training and testing the performance only on SemEval
+Validation. The second Stage including two datasets from the list and doing the same
+Training and Validation as before. 
+
+\begin{table}[!tbh]
     \centering
-    \caption{F1 Values of the Dataset Test of Last (50th) Epoch}
-    \label{tab:my-table}
-    \begin{tabular}{|c|c||cccc|c|}
+    \caption{F1 Values of the Dataset Expansion Test of Last (50th) Epoch for the different Startegies and Datasets, which are expanding SemEval. The Values are the SemEval only Validation.}
+    \label{tab:my-dsexp}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|c||cc|cccc|c|}
     \hline
-    \multirow{2}{*}{Dataset + SemEval} & \multirow{2}{*}{Strategy} & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{3-6}
-                                       &                           & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
-    Baseline                           &                           & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline\hline
-    \multirow{2}{*}{SNLI}              & CombDL                    & \multicolumn{1}{c|}{0.597} & \multicolumn{1}{c|}{0.613} & \multicolumn{1}{c|}{0.663} & 0.573 & 0.617 $\pm$ 0.042               \\ \cline{2-7} 
-                                       & CombDS                    & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.669} & \multicolumn{1}{c|}{0.637} & 0.664 & 0.643 $\pm$ 0.019               \\ \hline
-    \multirow{2}{*}{HEALTHVER}         & CombDL                    & \multicolumn{1}{c|}{0.595} & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.602} & 0.522 & 0.620 $\pm$ 0.009               \\ \cline{2-7} 
-                                       & CombDS                    & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.621} & \multicolumn{1}{c|}{0.631} & 0.622 & 0.635 $\pm$ 0.017               \\ \hline
-    \multirow{2}{*}{SCIFACT}           & CombDL                    & \multicolumn{1}{c|}{0.586} & \multicolumn{1}{c|}{0.547} & \multicolumn{1}{c|}{0.602} & 0.561 & 0.574 $\pm$ 0.022               \\ \cline{2-7} 
-                                       & CombDS                    & \multicolumn{1}{c|}{0.687} & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.664} & 0.645 & 0.654 $\pm$ 0.025               \\ \hline\hline
+    \multirow{2}{*}{Dataset + SemEval} & \multicolumn{2}{c|}{Strategy}        & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{2-7}
+                                       & \multicolumn{1}{c|}{CombDL} & CombDS & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
+    Baseline                           & \multicolumn{1}{c|}{}       &        & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline\hline
     
-    \multirow{2}{*}{SCIFACT,HEALTHVER} & CombDL                    & \multicolumn{1}{c|}{0.580} & \multicolumn{1}{c|}{0.564} & \multicolumn{1}{c|}{0.551} & 0.570 & 0.566 $\pm$ 0.010               \\ \cline{2-7} 
-                                       & CombDS                    & \multicolumn{1}{c|}{0.664} & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.657} & 0.649 & 0.652 $\pm$ 0.010               \\ \hline 
-    \multirow{2}{*}{SCIFACT,SNLI}      & CombDL                    & \multicolumn{1}{c|}{0.645} & \multicolumn{1}{c|}{0.607} & \multicolumn{1}{c|}{0.545} & 0.567 & 0.591 $\pm$ 0.039               \\ \cline{2-7} 
-                                       & CombDS                    & \multicolumn{1}{c|}{0.658} & \multicolumn{1}{c|}{0.574} & \multicolumn{1}{c|}{0.624} & 0.643 & 0.625 $\pm$ 0.032               \\ \hline 
-    \multirow{2}{*}{HEALTHVER,SNLI}    & CombDL                    & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & 0. & 0. $\pm$ 0.              \\ \cline{2-7} 
-                                       & CombDS                    & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & \multicolumn{1}{c|}{0.} & 0. & 0. $\pm$ 0.     \\ \hline 
+    \multirow{2}{*}{SNLI}              & \multicolumn{1}{c|}{\chm}   &        & \multicolumn{1}{c|}{0.597} & \multicolumn{1}{c|}{0.613} & \multicolumn{1}{c|}{0.685} & 0.573 & 0.617 $\pm$ 0.042               \\ \cline{2-8} 
+                                       & \multicolumn{1}{c|}{}       & \chm   & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.669} & \multicolumn{1}{c|}{0.648} & 0.634 & 0.643 $\pm$ 0.019               \\ \hline
     
-    \end{tabular}
+    \multirow{2}{*}{HEALTHVER}         & \multicolumn{1}{c|}{\chm}   &        & \multicolumn{1}{c|}{0.634} & \multicolumn{1}{c|}{0.614} & \multicolumn{1}{c|}{0.622} & 0.610 & 0.620 $\pm$ 0.009               \\ \cline{2-8} 
+                                       & \multicolumn{1}{c|}{}       & \chm   & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.661} & \multicolumn{1}{c|}{0.613} & 0.631 & 0.635 $\pm$ 0.017               \\ \hline
+    
+    \multirow{2}{*}{SCIFACT}           & \multicolumn{1}{c|}{\chm}   &        & \multicolumn{1}{c|}{0.586} & \multicolumn{1}{c|}{0.547} & \multicolumn{1}{c|}{0.603} & 0.561 & 0.574 $\pm$ 0.022               \\ \cline{2-8} 
+                                       & \multicolumn{1}{c|}{}       & \chm   & \multicolumn{1}{c|}{0.687} & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.664} & 0.645 & \textbf{0.654 $\pm$ 0.025}      \\ \hline\hline
+
+    
+    \multirow{2}{*}{SCIFACT,HEALTHVER} & \multicolumn{1}{c|}{\chm}   &        & \multicolumn{1}{c|}{0.580} & \multicolumn{1}{c|}{0.564} & \multicolumn{1}{c|}{0.551} & 0.570 & 0.566 $\pm$ 0.010               \\ \cline{2-8} 
+                                       & \multicolumn{1}{c|}{}       & \chm   & \multicolumn{1}{c|}{0.664} & \multicolumn{1}{c|}{0.637} & \multicolumn{1}{c|}{0.657} & 0.649 & \textbf{0.652 $\pm$ 0.010}     \\ \hline
+    
+    \multirow{2}{*}{SCIFACT,SNLI}      & \multicolumn{1}{c|}{\chm}   &        & \multicolumn{1}{c|}{0.645} & \multicolumn{1}{c|}{0.607} & \multicolumn{1}{c|}{0.545} & 0.567 & 0.591 $\pm$ 0.039               \\ \cline{2-8} 
+                                       & \multicolumn{1}{c|}{}       & \chm   & \multicolumn{1}{c|}{0.658} & \multicolumn{1}{c|}{0.574} & \multicolumn{1}{c|}{0.624} & 0.644 & 0.625 $\pm$ 0.032               \\ \hline
+    
+    \multirow{2}{*}{HEALTHVER,SNLI}    & \multicolumn{1}{c|}{\chm}   &        & \multicolumn{1}{c|}{0.615} & \multicolumn{1}{c|}{0.537} & \multicolumn{1}{c|}{0.615} & 0.658 & 0.606 $\pm$ 0.044               \\ \cline{2-8} 
+                                       & \multicolumn{1}{c|}{}       & \chm   & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.611} & \multicolumn{1}{c|}{0.664} & 0.602 & 0.636 $\pm$ 0.030               \\ \hline
+    \end{tabular}%
+    }
 \end{table}
 
+The Results (see Table~\ref{tab:my-dsexp}) showed that the CombinedLoader Strategy is worse than the Baseline, 
+which indicates that the model has generalization issues if the dataset is present
+with the same amount of Datapoints. Also, CombinedDataset Strategy is almost every
+time better than the Baseline Model, with around 2\% Points gain of F1 Value, showing
+that a generalized Model, handling multiple Text Entailment subtasks on different domain 
+is possible. Secondly it is visible that SCIFACT in combination with SemEval has the highest
+performance gain, which is the result of being tokenized around the same length of SemEval, therefore
+the Model has to abstract more the general meaning of the sentences and the Dataset is not dominant,
+meaning that the size is equally powerful.
 
 
 
@@ -155,23 +204,37 @@ Learning Rate, Token Length and Mixed-Precision
 
 
 
-\newpage
-\subsection{Architecture}
+
+
+
+
+
+\subsection{Sentence Embedding Architectures}
+
+As Results (see Table~\ref{tab:my-seb}) of the different Architectures (defined in Chapter~\ref{ch:seb})
+most of them are equally powerful than the Baseline. Version-3 is 1\% Point less than Version-4, which 
+is expected due to we are giving more information to the Feed-Forward-Layer (FNN). Version-2 is better than
+the Baseline but 4 times expensive in the backward calculations, which makes the performance boost neglectable.
+Version-6, which is the Siamese-Network combined with Cosine Similarity of the two embeddings of the sentences
+and MSELoss as Loss function, has a gain of 3.4\% F1-Value score, showing that Sentence Embedding can
+help to improve the Metric-Scores on the Text Entailment Task.
+
 
 \begin{table}[h]
     \centering
-    \caption{F1 Values of the Architecture Test from the Last (50th) Epoch}
-    \label{tab:my-table}
+    \caption{F1 Values of the different Architecture from the Last (50th) Epoch, indicating that Sentence Embedding
+             can boost the overall Performance.}
+    \label{tab:my-seb}
     \begin{tabular}{|c|c||cccc|c|}
     \hline
     \multirow{2}{*}{Model} & \multirow{2}{*}{Desciption}                                                                       & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{3-6}
                            &                                                                                                   & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
     Baseline               & \begin{tabular}[c]{@{}c@{}}BertModelForSequenceClassification\\ and CrossEntropyLoss\end{tabular} & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline
-    v2                     & \begin{tabular}[c]{@{}c@{}}(u, v, x, y) as input to FFN\\ and CrossEntropyLoss\end{tabular}       & \multicolumn{1}{c|}{0.652} & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.629} & 0.664 & 0.635 $\pm$ 0.024               \\ \hline
+    v2                     & \begin{tabular}[c]{@{}c@{}}(u, v, x, y) as input to FFN\\ and CrossEntropyLoss\end{tabular}       & \multicolumn{1}{c|}{0.652} & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.604} & 0.664 & 0.635 $\pm$ 0.024               \\ \hline
     v3                     & \begin{tabular}[c]{@{}c@{}}(u, v) as input to FNN\\ and CrossEntropyLoss\end{tabular}             & \multicolumn{1}{c|}{0.708} & \multicolumn{1}{c|}{0.583} & \multicolumn{1}{c|}{0.573} & 0.611 & 0.619 $\pm$ 0.054               \\ \hline
     v4                     & \begin{tabular}[c]{@{}c@{}}(u, v, |u-v|) as input to FNN\\ and CrossEntropyLoss\end{tabular}      & \multicolumn{1}{c|}{0.638} & \multicolumn{1}{c|}{0.631} & \multicolumn{1}{c|}{0.618} & 0.640 & 0.632 $\pm$ 0.009               \\ \hline
-    v5                     & \begin{tabular}[c]{@{}c@{}}CosSim(u, v)\\ and CosineEmbeddingLoss\end{tabular}                    & \multicolumn{1}{c|}{0.614} & \multicolumn{1}{c|}{0.632} & \multicolumn{1}{c|}{0.637} & 0.664 & 0.630 $\pm$ 0.023               \\ \hline
-    v6                     & \begin{tabular}[c]{@{}c@{}}CosSim(u, v)\\ and MSELoss\end{tabular}                                & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.654} & \multicolumn{1}{c|}{0.667} & 0.646 & 0.664 $\pm$ 0.011               \\ \hline
+    v5                     & \begin{tabular}[c]{@{}c@{}}CosSim(u, v)\\ and CosineEmbeddingLoss\end{tabular}                    & \multicolumn{1}{c|}{0.614} & \multicolumn{1}{c|}{0.603} & \multicolumn{1}{c|}{0.637} & 0.664 & 0.630 $\pm$ 0.023               \\ \hline
+    v6                     & \begin{tabular}[c]{@{}c@{}}CosSim(u, v)\\ and MSELoss\end{tabular}                                & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.675} & \multicolumn{1}{c|}{0.667} & 0.646 & \textbf{0.664 $\pm$ 0.011}               \\ \hline
     \end{tabular}
 \end{table}
 
@@ -199,7 +262,7 @@ Learning Rate, Token Length and Mixed-Precision
     \multicolumn{1}{|c||}{}                       & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
     Baseline BERT                                 & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline
     Adapter BERT                                  & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.587} & \multicolumn{1}{c|}{0.602} & 0.626 & 0.608 $\pm$ 0.015               \\ \hline
-    Baseline SIMCSE                               & \multicolumn{1}{c|}{0.598} & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.696} & 0.640 & 0.650 $\pm$ 0.036               \\ \hline
+    Baseline SIMCSE                               & \multicolumn{1}{c|}{0.598} & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.696} & 0.640 & \textbf{0.650 $\pm$ 0.036}               \\ \hline
     Adapter SIMCSE                                & \multicolumn{1}{c|}{0.643} & \multicolumn{1}{c|}{0.673} & \multicolumn{1}{c|}{0.615} & 0.654 & 0.646 $\pm$ 0.021      \\ \hline
     \end{tabular}
 \end{table}

@@ -4,16 +4,17 @@ Sentence Embedding and how fusing different Dataset together works, which are us
 
 
 \subsection{BERT}
-\begin{figure}[h]
+\begin{figure}[b]
+    \vspace{-1cm}
     \centering
-    \includegraphics[scale=0.33]{./content/BERT_Architecture.png}
+    \includegraphics[scale=0.22]{./content/BERT_Architecture.png}
     \caption{Bidirectional Encoder Representations from Transformers (BERT) 
-             scematic View \cite{devlin_bert_2019}.}
+             schematic View \cite{devlin_bert_2019}.}
     \label{tab:bert}
 \end{figure}
 
-The Experiments are using BERT, Bidirectional Encoder Representations from Transformers (see Fig.~\ref{tab:bert}) ~\cite{devlin_bert_2019} 
-developed by Google is based on Transformer architecture introduced by Vaswani et. al. \cite{vaswani_attention_2023}.
+The Experiments are using BERT, Bidirectional Encoder Representations from Transformers (see Figure~\ref{tab:bert}) ~\cite{devlin_bert_2019} 
+developed by Google is based on Transformer architecture introduced by Vaswani et al. \cite{vaswani_attention_2023}.
 Unlike previous attempts, that process text in a unidirectional way (either left to right or right to 
 left), BERT is designed to understand context bidirectionally as every Token is connected Pathways with every other. A masked language model (MLM) 
 pre-training target is used, where tokens are randomly masked from the input to predict the original 
@@ -23,6 +24,8 @@ BERT is available in different sizes like BERT-Base and BERT-Large. There are va
 such as RoBERTa~\cite{liu_roberta_2019}, ALBERT~\cite{lan_albert_2020}, BART~\cite{lewis_bart_2020}, 
 DeBERTa~\cite{he_deberta_2021}, which improves BERT architecture differently.
 
+We are using pre-trained BERT-Base Model from Huggingface~\cite{noauthor_hugging_2024-1} due to Limitations
+of the Environment (see Chapter~\ref{ch:ev}) and supervised fine-tune it to SemEval.
 
 
 
@@ -36,8 +39,43 @@ DeBERTa~\cite{he_deberta_2021}, which improves BERT architecture differently.
 
 
 
-\subsection{Sentence Embedding Architectures}
-\textcolor{red}{TODO}
+
+\subsection{Sentence Embedding Architectures}\label{ch:seb}
+\begin{figure}[h]
+    \vspace{-1cm}
+    \centering
+    %\resizebox{\textwidth}{!}{\input{./content/versions.tikz}}
+    \resizebox{\textwidth}{!}{\input{./content/versions.tikz}}
+    \caption{Sentence Embedding idea is based on BERT Model. Strategy v1 is the
+             Baseline, handling everything in once and every token can contribute to each other, while
+             Strategy v2 split the sentence in four parts, and fed separately to the same
+             model. Strategy v3, v4, v5 and v6
+             uses the same idea but Concatenating, using only premise and hypothesis and generating the output differently.}\label{fig:ver}
+\end{figure}
+
+Sentence-BERT (SBERT) \cite{reimers_sentence-bert_2019}, a modification of the BERT \cite{devlin_bert_2019} network, is a strategy designed for 
+semantic similarity tasks, to generate meaningful embeddings. While BERT \cite{devlin_bert_2019} and RoBERTa \cite{liu_roberta_2019} excel in sentence-pair 
+regression tasks, they suffer from computational overhead when dealing with large 
+collections of sentences. SBERT addresses this issue by using 
+siamese and triplet network structures to generate semantically meaningful 
+sentence embeddings. Also, a key point is, especially with BERT, the two sentences are 
+passing the Model individual, meaning that the Tokens of each sentence does not interfere
+with each other. This allows for efficient similarity comparisons, 
+clustering, and semantic search.
+The authors demonstrate that SBERT significantly reduces the time required for 
+finding the most similar pair in a collection of 10,000 sentences from 65 
+hours with BERT to about 5 seconds.
+
+We use this Principle and applied it to the SemEval Task (see Figure~\ref{fig:ver}). 
+Therefore, we come up with five different ideas, where they use the Siamese-Architecture as Core, 
+which is sharing the Models Parameters. Version-2 (v2) has four
+parts of the defined Sentence (see Equation~\ref{eq:ds-sentence}) split at the $[SEP]$ Tokens.
+Version-3 (v3), Version-4 (v4), Version-5 (v5) and Version-6 (v6) has the split on the first $[SEP]$ Token, to separate Statement from the Hypothesis.
+Version-3 and Version-4 uses a simple Feed-Forward-Classifier after the Concatenation combined with CrossEntropyLoss.
+Version-5 and Version-6 uses Cosine Similarity, with a Mapping ensuring Entailment being $1$ and
+Contradiction being $-1$. Version-5 uses CosineEmbeddingLoss and Version-6 uses MSELoss to 
+minimize, if entailed, and maximize, if contradiction, the spatial distances.
+
 
 
 
@@ -56,14 +94,8 @@ DeBERTa~\cite{he_deberta_2021}, which improves BERT architecture differently.
 
 
 \subsection{Adapter Tuning}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.2]{./content/Adapter_Architecture.png}
-    \caption{Basic Structure of Adapter built on top of a Models Architecture, where only the Adapter Layers Parameters are trainable \cite{zheng_learn_2023}.}
-    \label{tab:bert}
-\end{figure}
 
-Adapter Tuning is a supervised method, where input, gold label are given and the models parameters are frozen, 
+Adapter Tuning (see Figure~\ref{tab:adapt}) is a supervised method, where input, gold label are given and the models parameters are frozen, 
 but adding new fully trainable bottleneck feed-forward networks 
 on each intermediate layer. The objective is to reduce the size of trainable parameters, 
 to gain higher throughput and keeping the pre-trained embeddings\cite{zheng_learn_2023} \cite{naveed_comprehensive_2023}. 
@@ -72,53 +104,21 @@ while still benefiting from the broad language understanding gained during the i
 pre-training \cite{manjavacas_adapting_2022}. The effectiveness of adaptation-tuning depends on 
 the similarity between the pre-training task and the target task due to fixed embeddings.
 
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Fusing different Datasets/Loaders}
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \resizebox{\textwidth}{!}{\input{./content/test.tikz}}
-    \caption{Combined Dataset and Combined Loader Strategy where 4 different Dataset are getting mixed together.
-             On the Loader-Level for a Batch size of 16, every Dataset is present equally and on the
-             Dataset-Level, they are concatenated and the mixed.}\label{fig:test}
+    \includegraphics[scale=0.2]{./content/Adapter_Architecture.png}
+    \caption{Basic Structure of Adapter built on top of a Models Architecture (left side), where only the Adapter Layers Parameters (right side) are trainable \cite{zheng_learn_2023}.
+             In our Case we are using $768$ to $512$ Down-Projector, followed by GELU-Activation and
+             $512$ to $768$ UP-Projector.}
+    \label{tab:adapt}
 \end{figure}
-Normally a Pre-Trained Model is used which is then fine-tuned on the Specific Dataset. The same can be applied to
-Text Classification. Therefore the Model is performing only on SemEval very good, while mismatching on generalization
-on other Text Classification Tasks. To Compensate, two strategies are applied to solve this.
-CombinedLoaders is a strategy, where each Dataset, on which the Model should perform, can contribute equally with
-the same amount of Datapoints. Another strategy involves the concatenation of all these Datasets to one and then being
-mixed on the Training. For our Example (see Chapter~\ref{ch:ds}) we are using SNLI \cite{noauthor_snli_2023}
-which has short sencences for entailment check, Healthver \cite{noauthor_dwaddenhealthver_entailment_nodate} a Dataset on the medical domain and
-scifact \cite{noauthor_allenaiscifact_entailment_nodate} on the scientific domain, to check the entailment of claim, 
-paper title and abstract. The Evaluation of the Strategies is only applied to SemEval Task Development
-Dataset not on the choosen ones for expanding. Also the expected outcome should be lower than the
-specialized Model on SemEval as it has to generalize the different domains more.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+For our Experiments we are comparing supervised fine-tuned BERT, with the SemEval dataset against
+a Adapter-BERT version, where the pre-trained BERT's Parameters are frozen. Secondly we are
+taking the BERT Model from SimCSE~\cite{gao_simcse_2022-1}, which applied a Supervised
+Contrastive Learning idea on SNLI Data, to minimize and maximize the spatial distances,
+which effects the Output Representations of BERT and using the same principle with the Adapter on this Model.
 
 
 
@@ -153,5 +153,65 @@ is the harmonic mean between precision and recall defined in Equation~\ref{eq:f}
 \begin{equation}\label{eq:f}
     F_1 = 2 \frac{precision \cdot recall}{precision + recall} = \frac{2 TP}{2TP + FP + FN}
  \end{equation}
+
+
+ 
+
+
+
+\subsection{Fusing different Datasets/Loaders}
+\begin{figure}[b]
+    \centering
+    \resizebox{\textwidth}{!}{\input{./content/test.tikz}}
+    \caption{Combined Dataset and Combined Loader Strategy where 4 different Datasets are getting mixed together.
+             On the Loader-Level for a Batch size of 16, every Dataset is present equally and on the
+             Dataset-Level, they are concatenated and the mixed.}\label{fig:test}
+\end{figure}
+
+
+Normally a Pre-Trained Model is used which is then fine-tuned on the Specific Dataset. The same can be applied to
+Text Classification. Therefore, the Model is performing only on SemEval very good, while mismatching on generalization
+on other Text Classification Tasks. To Compensate, two strategies (see Figure~\ref{fig:test}) are applied to solve this.
+CombinedLoaders is a strategy, where each Dataset, on which the Model should perform, can contribute equally with
+the same amount of Datapoints. Another strategy involves the concatenation of all these Datasets to one and then being
+mixed on the Training. For our Example (see Chapter~\ref{ch:ds} and Figure~\ref{tab:histo}) we are using SNLI \cite{noauthor_snli_2023}
+which has short sentences for entailment check, HEALTHVER \cite{noauthor_dwaddenhealthver_entailment_nodate} a Dataset on the medical domain and
+SCIFACT \cite{noauthor_allenaiscifact_entailment_nodate} on the scientific domain, to check the entailment of claim, 
+paper title and abstract. The Evaluation of the Strategies is only applied to SemEval Task Development
+Dataset not on the chosen ones for expanding. Also, the expected outcome should be lower than the
+specialized Model on SemEval as it has to generalize the different domains more.
+
+
+\begin{figure}[t]
+    \hspace*{-1.75cm}
+    \centering
+    \includegraphics[width=1.3\textwidth]{./content/Histogram_Dataset.png}
+    \caption{Histogram of how different Datasets combined with SemEval changes the
+             Occurrences in the Bins. HEALTHVER and SCIFACT shows a slight
+             shift on the x-Axis towards right, indicating that the length
+             of the sentences is higher. On the other side SNLI, is dominating, 
+             because the sentence structure is rather small. }
+    \label{tab:histo}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

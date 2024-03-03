@@ -1,43 +1,46 @@
 \section{Recent Works}\label{sec:recentworks}
 
 
+\begin{table}[!tbh]
+    \centering
+    \caption{Results of the SemEval-2023 Task 7.1 (SemEval-2024 Task 2) \cite{noauthor_nli4ct_nodate}, with
+             several attempts to use BERT as baseline.}
+    \label{tab:results}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l||l|l|}
+    \hline
+    Model/Method     & Working Team                                                         & F1 Value                                                                                      \\ \hline\hline
+    BERT             & \begin{tabular}[c]{@{}l@{}}\cite{wang_knowcomp_2023}KnowComp\\ \cite{vladika_sebis_2023}Sebis\\ \cite{alissa_just-km_2023}JUST-KM\end{tabular}   & \begin{tabular}[c]{@{}l@{}}base: 69.2 large: 70.9\\ base: 61:0\\ base: 63.4\end{tabular} \\ \hline
+    DistilBERT       & \cite{takehana_stanford_2023}Standford                                                            & 60.8                                                                                     \\ \hline
+    BioBERT          & \begin{tabular}[c]{@{}l@{}}\cite{vladika_sebis_2023}Sebis\\ \cite{takehana_stanford_2023}Standford\\ \cite{feng_ynu-hpcc_nodate}YNU-HPCC\end{tabular} & \begin{tabular}[c]{@{}l@{}}64.5\\ 63.7\\ 67.9\end{tabular}                               \\ \hline
+    BioClinical-BERT & \begin{tabular}[c]{@{}l@{}}\cite{wang_knowcomp_2023}KnowComp\\ \cite{vladika_sebis_2023}Sebis\\ \cite{takehana_stanford_2023}Standford\end{tabular} & \begin{tabular}[c]{@{}l@{}}65.3\\ 65.7\\ 64.8\end{tabular}                               \\ \hline
+    GatorTron-BERT   & \cite{alameldin_clemson_nodate}Clemson NLP                                                          & 70.5                                                                                     \\ \hline
+    PubMedBERT       & \cite{takehana_stanford_2023}Standford                                                            & 66.0                                                                                     \\ \hline
+    ALBERT-v2        & \cite{wang_knowcomp_2023}KnowComp                                                             & 67.1                                                                                     \\ \hline
+    BART             & \cite{wang_knowcomp_2023}KnowComp                                                             & base: 67.1 large: 66.9                                                                   \\ \hline
+    RoBERTa          & \begin{tabular}[c]{@{}l@{}}\cite{wang_knowcomp_2023}KnowComp\\ \cite{alissa_just-km_2023}JUST-KM\end{tabular}           & \begin{tabular}[c]{@{}l@{}}base: 70.7 large: 67.6\\ base: 65.6 large: 66.1 role-based: 67.0\end{tabular}  \\ \hline
+    DeBERTa-v3       & \begin{tabular}[c]{@{}l@{}}\cite{wang_knowcomp_2023}KnowComp\\ \cite{vladika_sebis_2023}Sebis\end{tabular}             & \begin{tabular}[c]{@{}l@{}}base: 75.8 large: 81.5\\ large: 80.5\end{tabular}             \\ \hline
+    ELECTRA          & \begin{tabular}[c]{@{}l@{}}\cite{wang_knowcomp_2023}KnowComp\\ \cite{takehana_stanford_2023}Standford\end{tabular}         & \begin{tabular}[c]{@{}l@{}}base:70.3 large: 76.1\\ small: 63.9\end{tabular}              \\ \hline
+    GPT2             & \cite{wang_knowcomp_2023}KnowComp                                                             & base: 39.0 medium 44.2 large: 61.5                                                       \\ \hline
+    T5               & \cite{rajamanickam_i2r_2023}I2R                                                                  & base: 62.9 large: 68.3                                                                   \\ \hline
+    Flan-T5-xxl      & \cite{kanakarajan_saama_2023}Saama                                                                & 83.4                                                                                     \\ \hline
+    MGNet            & \cite{zhou_thifly_2023}THiFLY                                                               & 85.6                                                                                     \\ \hline
+    \end{tabular}%
+    }
+\end{table}
+
+
 The majority of the released systems failed to achieve significantly above the majority-class baseline of 66.7\%
-F1 value see Table~\ref{tab:results} \cite{jullien_semeval-2023_nodate}.
-\textbf{Sebis \cite{vladika_sebis_2023}} uses a system concatenating the parts of the CTRs in two diffent method, called pipeline and joint, 
-where basically the sentence represenation includes more $[SEP]$ tokens to dense it up.
-\textbf{KnowComp \cite{wang_knowcomp_2023}, YNU-HPCC \cite{feng_ynu-hpcc_nodate} and Stanford \cite{takehana_stanford_2023}, I2R \cite{rajamanickam_i2r_2023}, Clemson NLP \cite{alameldin_clemson_nodate}} uses the same strategy as we do (see Equation ~\ref{eq:ds-sentence}) to feed forward the sentence in several most popular Models.
-Compared to the others, \textbf{YNU-HPCC \cite{feng_ynu-hpcc_nodate}} utilize Supervised Contrastive Learning with the corresponding loss function.
-\textbf{JUST-KM \cite{alissa_just-km_2023}} Models are enhanching RoBERTa in a role-based approach, where the two RoBERTa-Large Models trained differently, 
+F1 value (see Table~\ref{tab:results}) \cite{jullien_semeval-2023_nodate}.
+\textbf{Sebis \cite{vladika_sebis_2023}} uses a system concatenating the parts of the CTRs in two different method, called pipeline and joint, 
+where basically the sentence representation includes more $[SEP]$ tokens to dense it up.
+\textbf{KnowComp \cite{wang_knowcomp_2023}, YNU-HPCC \cite{feng_ynu-hpcc_nodate}, Stanford \cite{takehana_stanford_2023}, I2R \cite{rajamanickam_i2r_2023} and Clemson NLP \cite{alameldin_clemson_nodate}} uses the same strategy as we do (see Equation ~\ref{eq:ds-sentence}) to feed forward the sentence in several most popular Models.
+Compared to the others, \textbf{YNU-HPCC \cite{feng_ynu-hpcc_nodate}} utilize Supervised Contrastive Learning with the corresponding loss function, 
+to maximize, if it is contradiction, or minimize, if it is entailed, the spatial representation vector of the two compared inputs.
+\textbf{JUST-KM \cite{alissa_just-km_2023}} Models are enhancing RoBERTa in a role-based approach, where the two RoBERTa-Large Models trained differently, 
 to predict the general outcome.
 \textbf{Saama \cite{kanakarajan_saama_2023}} finetuned Flan-T5 LLM to SemEval's task-specific data by applying different Instruction Templates. 
 \textbf{THiFLY \cite{zhou_thifly_2023}} employ Multigranularity Inference Network, which uses the Equation~\ref{eq:ds-sentence} sentence structure to pass
 it further to a Joint Semantic Encoder followed by Pooling and Sencence-Level Encoder before Classification.
 
 
-
-
-\begin{table}[]
-    \centering
-    \caption{Results of the SemEval-2023 Task 7.1 (SemEval-2024 Task 2) \cite{noauthor_nli4ct_nodate}, with
-             several attempts to use BERT as baseline.}
-    \label{tab:results}
-    \begin{tabular}{|l||l|l|}
-    \hline
-    Model/Method     & Working Team                                                             & F1                                                                                       \\ \hline\hline
-    BERT             & \begin{tabular}[c]{@{}l@{}}KnowComp\\ Sebis\\ JUST-KM\end{tabular}   & \begin{tabular}[c]{@{}l@{}}base: 69.2 large: 70.9\\ base: 61:0\\ base: 63.4\end{tabular} \\ \hline
-    DistilBERT       & Standford                                                            & 60.8                                                                                     \\ \hline
-    BioBERT          & \begin{tabular}[c]{@{}l@{}}Sebis\\ Standford\\ YNU-HPCC\end{tabular} & \begin{tabular}[c]{@{}l@{}}64.5\\ 63.7\\ 67.9\end{tabular}                               \\ \hline
-    BioClinical-BERT & \begin{tabular}[c]{@{}l@{}}KnowComp\\ Sebis\\ Standford\end{tabular} & \begin{tabular}[c]{@{}l@{}}65.3\\ 65.7\\ 64.8\end{tabular}                               \\ \hline
-    GatorTron-BERT   & Clemson NLP                                                          & 70.5                                                                                     \\ \hline
-    PubMedBERT       & Standford                                                            & 66.0                                                                                     \\ \hline
-    ALBERT-v2        & KnowComp                                                             & 67.1                                                                                     \\ \hline
-    BART             & KnowComp                                                             & base: 67.1 large: 66.9                                                                   \\ \hline
-    RoBERTa          & \begin{tabular}[c]{@{}l@{}}KnowComp\\ JUST-KM\end{tabular}           & \begin{tabular}[c]{@{}l@{}}base: 70.7 large: 67.6\\ base: 65.6 large: 66.1 role-based: 67.0\end{tabular}  \\ \hline
-    DeBERTa-v3       & \begin{tabular}[c]{@{}l@{}}KnowComp\\ Sebis\end{tabular}             & \begin{tabular}[c]{@{}l@{}}base: 75.8 large: 81.5\\ large: 80.5\end{tabular}             \\ \hline
-    ELECTRA          & \begin{tabular}[c]{@{}l@{}}KnowComp\\ Standford\end{tabular}         & \begin{tabular}[c]{@{}l@{}}base:70.3 large: 76.1\\ small: 63.9\end{tabular}              \\ \hline
-    GPT2             & KnowComp                                                             & base: 39.0 medium 44.2 large: 61.5                                                       \\ \hline
-    T5               & I2R                                                                  & base: 62.9 large: 68.3                                                                   \\ \hline
-    Flan-T5-xxl      & Saama                                                                & 83.4                                                                                     \\ \hline
-    MGNet            & THiFLY                                                               & 85.6                                                                                     \\ \hline
-    \end{tabular}
-\end{table}

@@ -1,0 +1,78 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=rec] (0) at (0, 0) {Bert};
+		\node [style=Textfeld] (1) at (0, 2) {Sentence};
+		\node [style=rec] (2) at (0, -0.5) {For};
+		\node [style=rec] (4) at (0, -1) {Sentence};
+		\node [style=rec] (5) at (0, -1.5) {Classification};
+		\node [style=Textfeld] (9) at (2.75, 2) {smt};
+		\node [style=Textfeld] (10) at (4.25, 2) {sec};
+		\node [style=Textfeld] (11) at (5.75, 2) {$p_1, p_2, ...$};
+		\node [style=Textfeld] (12) at (7.25, 2) {$s_1, s_2, ...$};
+		\node [style=Scale] (13) at (5, -2) {Cat(u, v, x, y)};
+		\node [style=Softmax] (14) at (5, -2.75) {Classifier};
+		\node [style=Linear] (15) at (2.75, 0) {BERT};
+		\node [style=Linear] (16) at (4.25, 0) {BERT};
+		\node [style=Linear] (17) at (5.75, 0) {BERT};
+		\node [style=Linear] (18) at (7.25, 0) {BERT};
+		\node [style=Textfeld] (19) at (0, -4) {0 or 1};
+		\node [style=Textfeld] (20) at (5, -4) {0 or 1};
+		\node [style=Textfeld] (21) at (11.25, 2) {smt};
+		\node [style=Textfeld] (22) at (12.75, 2) {$s_1, s_2, ...$};
+		\node [style=Textfeld] (23) at (12.75, 2.5) {$p_1, p_2, ...$};
+		\node [style=Scale] (25) at (9.5, -2) {Cat(u, v)};
+		\node [style=Softmax] (26) at (9.5, -2.75) {Classifier};
+		\node [style=Linear] (27) at (11.25, 0) {BERT};
+		\node [style=Linear] (28) at (12.75, 0) {BERT};
+		\node [style=Textfeld] (31) at (9.5, -4) {0 or 1};
+		\node [style=Textfeld] (32) at (12.75, 3) {sec};
+		\node [style=Scale] (36) at (12, -2) {Cat(u, v, |u-v|)};
+		\node [style=Softmax] (37) at (12, -2.75) {Classifier};
+		\node [style=Textfeld] (40) at (12, -4) {0 or 1};
+		\node [style=Scale] (45) at (14.5, -2) {CosSim(u, v)};
+		\node [style=Softmax] (46) at (14.5, -2.75) {Map(-1, 1 -> 0, 1)};
+		\node [style=Textfeld] (49) at (14.5, -4) {0 or 1};
+		\node [style=none] (51) at (1.75, 3) {};
+		\node [style=none] (52) at (1.75, -5.25) {};
+		\node [style=none] (53) at (8.25, 3) {};
+		\node [style=none] (54) at (8.25, -5.25) {};
+		\node [style=Textfeld] (55) at (0, -5) {\textbf{v1/Baseline}};
+		\node [style=Textfeld] (56) at (5, -5) {\textbf{v2}};
+		\node [style=Textfeld] (57) at (9.5, -5) {\textbf{v3}};
+		\node [style=Textfeld] (58) at (12, -5) {\textbf{v4}};
+		\node [style=Textfeld] (59) at (14.5, -5) {\textbf{v5/v6}};
+		\node [style=none] (60) at (-1.25, -4.5) {};
+		\node [style=none] (61) at (16, -4.5) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=arrow] (1) to (0);
+		\draw [style=arrow] (13) to (14);
+		\draw [style=arrow] (9) to (15);
+		\draw [style=arrow] (15) to (13);
+		\draw [style=arrow] (16) to (13);
+		\draw [style=arrow] (10) to (16);
+		\draw [style=arrow] (11) to (17);
+		\draw [style=arrow] (17) to (13);
+		\draw [style=arrow] (12) to (18);
+		\draw [style=arrow] (18) to (13);
+		\draw [style=arrow] (5) to (19);
+		\draw [style=arrow] (14) to (20);
+		\draw [style=arrow] (25) to (26);
+		\draw [style=arrow] (21) to (27);
+		\draw [style=arrow] (27) to (25);
+		\draw [style=arrow] (28) to (25);
+		\draw [style=arrow] (22) to (28);
+		\draw [style=arrow] (26) to (31);
+		\draw [style=arrow] (36) to (37);
+		\draw [style=arrow] (37) to (40);
+		\draw [style=arrow] (45) to (46);
+		\draw [style=arrow] (46) to (49);
+		\draw (51.center) to (52.center);
+		\draw [style=arrow] (27) to (36);
+		\draw [style=arrow] (27) to (45);
+		\draw [style=arrow] (28) to (36);
+		\draw [style=arrow] (28) to (45);
+		\draw (53.center) to (54.center);
+		\draw (60.center) to (61.center);
+	\end{pgfonlayer}
+\end{tikzpicture}
