@@ -57,7 +57,7 @@ that the gradients are too high or low. The best Learning Rate, based on the See
 $0.640 \pm 0.021$.
 
 However, it was observed that altering the token size and introducing mixed precision led to 
-the destruction of tensors within the model leading to re pre-train it whitin the Environment
+the destruction of tensors within the model leading to re pre-train it with the given Environments
 this is impossible. 
 This suggests potential challenges and limitations associated with modifying these parameters, 
 emphasizing the need for careful consideration and experimentation when adjusting 
@@ -110,7 +110,7 @@ The Target to analyze is if the order of the elements is relevant for deciding t
 wich should not be relevant due to BERT's Architecture, and
 if information after the cutpoint has interesting and relevant facts, which influences
 the decision making process. With no permutation the 
-Sentence is only 512 tokens long with the first-come-first-serve principle. Permutation on
+Sentence is only 512 tokens long with first-come-first-serve principle. Permutation on
 indicates that the order is not significant.
 
 \begin{table}[!t]
@@ -147,7 +147,7 @@ sentences every Batch is for the later Experiments too much. Therefore, we skip 
 
 \begin{table}[!b]
     \centering
-    \caption{F1 Values of the Dataset Expansion Test of Last (50th) Epoch for the different Startegies and Datasets, which are expanding SemEval. The Values are the SemEval only Validation.}
+    \caption{F1 Values of the Dataset Expansion Test of Last (50th) Epoch for the different Strategies and Datasets, which expanding SemEval. The Values are the SemEval only Validation Scores.}
     \label{tab:my-dsexp}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|c||cc|cccc|c|}
@@ -179,7 +179,7 @@ sentences every Batch is for the later Experiments too much. Therefore, we skip 
 \end{table}
 
 We have tested the two Dataset Expansion Strategies CombinedLoader (CombDL) and CombinedDataset (CombDS)
-on two phases with the expasion Datasets SNLI, HEALTHVER and SCIFACT. The first Stage 
+on two phases with the expansion Datasets SNLI, HEALTHVER and SCIFACT. The first Stage 
 is combining one Dataset with SemEval Training and testing the performance only on SemEval
 Validation. The second Stage including two datasets from the list and doing the same
 Training and Validation as before. 
@@ -187,7 +187,7 @@ Training and Validation as before.
 
 The Results (see Table~\ref{tab:my-dsexp}) showed that the CombinedLoader Strategy is worse than the Baseline, 
 which indicates that the model has generalization issues if the dataset is present
-with the same amount of Datapoints. Also, CombinedDataset Strategy is almost every
+with the same amount of Datapoints in one Batch. Also, CombinedDataset Strategy is almost every
 time better than the Baseline Model, with around 2\% Points gain of F1 Value, showing
 that a generalized Model, handling multiple Text Entailment subtasks on different domain 
 is possible. Secondly it is visible that SCIFACT in combination with SemEval has the highest
@@ -263,7 +263,7 @@ already have a good representation saved in the Tensor and the Adapter Layer onl
 \begin{table}[!t]
     \centering
     \caption{F1 Values of the Adapter Trial from the Last (50th) Epoch for the general BERT Model and
-             the supervise SimCSE objective trained BERT}
+             the supervised SimCSE trained BERT}
     \label{tab:my-adapt}
     \begin{tabular}{|l||cccc|c|}
     \hline

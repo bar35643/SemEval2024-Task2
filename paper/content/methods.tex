@@ -5,7 +5,6 @@ Sentence Embedding and how fusing different Dataset together works, which are us
 
 \subsection{BERT}
 \begin{figure}[b]
-    \vspace{-1cm}
     \centering
     \includegraphics[scale=0.22]{./content/BERT_Architecture.png}
     \caption{Bidirectional Encoder Representations from Transformers (BERT) 
@@ -106,9 +105,9 @@ the similarity between the pre-training task and the target task due to fixed em
 
 \begin{figure}[!b]
     \centering
-    \includegraphics[scale=0.28]{./content/Adapter_Architecture.png}
+    \includegraphics[scale=0.25]{./content/Adapter_Architecture.png}
     \caption{Basic Structure of Adapter built on top of a Models Architecture (left side), where only the Adapter Layers Parameters (right side) are trainable \cite{zheng_learn_2023}.
-             In our Case we are using $768$ to $512$ Down-Projector, followed by GELU-Activation and
+             In our Case we are using $768$ to $512$ DOWN-Projector, followed by GELU-Activation and
              $512$ to $768$ UP-Projector.}
     \label{tab:adapt}
 \end{figure}
@@ -179,7 +178,7 @@ which has short sentences for entailment check, HEALTHVER \cite{noauthor_dwadden
 SCIFACT \cite{noauthor_allenaiscifact_entailment_nodate} on the scientific domain, to check the entailment of claim, 
 paper title and abstract. The Evaluation of the Strategies is only applied to SemEval Task Development
 Dataset not on the chosen ones for expanding. Also, the expected outcome should be lower than the
-specialized Model on SemEval as it has to generalize the different domains more.
+specialized Model on SemEval as it has to generalize the different domains.
 
 
 \begin{figure}[t]
