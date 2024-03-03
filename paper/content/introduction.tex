@@ -1,9 +1,40 @@
 \section{Introduction}\label{sec:introduction}
 
+
+
+In clinical studies, Clinical Trial Reports (CTRs) provide detailed information about patients
+treatments and reactions \cite{noauthor_nli4ct_nodate} \cite{jullien_nli4ct_2023}. 
+However, the increasing volume of CTRs, coupled with a lack of suitable 
+analytical tools, poses challenges for clinicians to deliver personalized, evidence-based care \cite{takehana_stanford_2023}\cite{wang_knowcomp_2023}. 
+Despite improvements in CTR reliability, there is a notable gap in the ability to analyze and compare them effectively \cite{vladika_sebis_2023}. 
+Natural language inference (NLI) models show promise in deducing logical relationships in texts, but their application 
+in the medical domain presents unique challenges \cite{wang_knowcomp_2023}\cite{alissa_just-km_2023}\cite{rajamanickam_i2r_2023}\cite{takehana_stanford_2023}\cite{vladika_sebis_2023}. 
+These include the need for domain-specific knowledge due to clinical 
+jargon and the variability in scientific communication. Additionally, distinguishing between non-entailed subsequences 
+further complicates NLI systems \cite{noauthor_nli4ct_nodate}.
+
+
 \paragraph{\textbf{Task:}} Classification of the relation between CTR premises and a 
 statement, as being Entailed or a Contradiction. Models are expected to predict whether 
 each statement affirms an entailment or forms a contradiction given the associated 
 section from the claimed CTRs.
+
+
+Recent works are reviewed, highlighting shortcomings in existing systems. 
+Various models are examined, employing strategies such as pipeline concatenation, 
+joint representation, supervised contrastive learning, and role-based enhancement \cite{wang_knowcomp_2023}\cite{alissa_just-km_2023}\cite{vladika_sebis_2023}\cite{zhou_thifly_2023}.
+We are clarifying in Chapter~\ref{sec:dataset} how the CTR Dataset for the SemEval Task 2
+is built and how we use them in our Models and Strategies. Also, we are briefly looking into the 
+ranking of several, mostly BERT derivatives, Models.
+Methods, detailed in the Chapter~\ref{sec:methods}, cover loss and metric functions, 
+the use of BERT as the base model, sentence embedding architectures 
+like SBERT, and adapter tuning. Experiments in constrained environments 
+explore learning rate effects, token size challenges, and the impact of sentence 
+permutation. Dataset expansion strategies and the effects of different sentence 
+embedding architectures and adapter tuning on model performance are thoroughly evaluated.
+The experiments (see Chapter~\ref{sec:experiments}) collectively shed light on the complexities of clinical trial report analysis, 
+emphasizing the need to address challenges in data processing, model architecture, and training 
+strategies.
 
 
 

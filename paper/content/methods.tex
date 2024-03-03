@@ -41,7 +41,7 @@ of the Environment (see Chapter~\ref{ch:ev}) and supervised fine-tune it to SemE
 
 
 \subsection{Sentence Embedding Architectures}\label{ch:seb}
-\begin{figure}[h]
+\begin{figure}[!b]
     \vspace{-1cm}
     \centering
     %\resizebox{\textwidth}{!}{\input{./content/versions.tikz}}
@@ -104,9 +104,9 @@ while still benefiting from the broad language understanding gained during the i
 pre-training \cite{manjavacas_adapting_2022}. The effectiveness of adaptation-tuning depends on 
 the similarity between the pre-training task and the target task due to fixed embeddings.
 
-\begin{figure}[t]
+\begin{figure}[!b]
     \centering
-    \includegraphics[scale=0.2]{./content/Adapter_Architecture.png}
+    \includegraphics[scale=0.28]{./content/Adapter_Architecture.png}
     \caption{Basic Structure of Adapter built on top of a Models Architecture (left side), where only the Adapter Layers Parameters (right side) are trainable \cite{zheng_learn_2023}.
              In our Case we are using $768$ to $512$ Down-Projector, followed by GELU-Activation and
              $512$ to $768$ UP-Projector.}

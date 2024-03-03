@@ -1,21 +1,6 @@
 \section{Datasets}\label{sec:dataset}
 
-A group of four domain experts, including clinical trial organizers from the Manchester Cancer Institute and the 
-Digital Experimental Cancer Medicine Team (DECMT), participated in an annotation task to generate entailment and contradiction 
-statements for Clinical Trial Reports (CTR). Annotators were tasked with generating non-trivial statements about the contents of primary and 
-secondary trials, encouraging understanding and reasoning. Each CTR was divided into four sections representing facts, and 
-evidence supporting the labeled statement was selected from these facts. In cases of negation, the full CTR section was 
-provided as evidence. A negative rewriting strategy was employed to create contradictory statements, and evidence contradicting 
-these statements was collected \cite{jullien_semeval-2023_nodate} \cite{noauthor_nli4ct_nodate}.
-Each Datapoint in the Training and Development Set have a statement, label being either Entangled or Contradiction, and one or two Prompts being
-one of four different CTR sections of Adverse Events, Eligibility, Intervention or Results (see Table~\ref{tab:ds-example}). 
-60\% of the Dataset are Single-Type, which then has only the Primary Prompt as relevant information and the other 40\% are 
-Comparison-Type has Primary and Secondary Prompt \cite{noauthor_nli4ct_nodate}\cite{jullien_nli4ct_2023}\cite{jullien_semeval-2023_nodate}.
-The SemEval task 2 dataset consists of 1700 training and 200 development samples (see Table~\ref{tab:ds-distribution}),
-distributed equally between the two labels and almost for the 4 kinds of CTR sections. We use the development samples
-as validation dataset to evaluate the performance of the Models.
-
-\begin{table}[!h]
+\begin{table}[!b]
     \centering
     \caption{Two Example Clinical Trial Report taken out of the Dataset to represent the two types Comparison and Single.
              Each Sample has a Statement, Label, the relevant Section and one or two Premises called Trial.}
@@ -33,8 +18,23 @@ as validation dataset to evaluate the performance of the Models.
     }
 \end{table}
 
+A group of four domain experts, including clinical trial organizers from the Manchester Cancer Institute and the 
+Digital Experimental Cancer Medicine Team (DECMT), participated in an annotation task to generate entailment and contradiction 
+statements for Clinical Trial Reports (CTR). Annotators were tasked with generating non-trivial statements about the contents of primary and 
+secondary trials, encouraging understanding and reasoning. Each CTR was divided into four sections representing facts, and 
+evidence supporting the labeled statement was selected from these facts. In cases of negation, the full CTR section was 
+provided as evidence. A negative rewriting strategy was employed to create contradictory statements, and evidence contradicting 
+these statements was collected \cite{jullien_semeval-2023_nodate} \cite{noauthor_nli4ct_nodate}.
+Each Datapoint in the Training and Development Set have a statement, label being either Entangled or Contradiction, and one or two Prompts being
+one of four different CTR sections of Adverse Events, Eligibility, Intervention or Results (see Table~\ref{tab:ds-example}). 
+60\% of the Dataset are Single-Type, which then has only the Primary Prompt as relevant information and the other 40\% are 
+Comparison-Type has Primary and Secondary Prompt \cite{noauthor_nli4ct_nodate}\cite{jullien_nli4ct_2023}\cite{jullien_semeval-2023_nodate}.
+The SemEval task 2 dataset consists of 1700 training and 200 development samples (see Table~\ref{tab:ds-distribution}),
+distributed equally between the two labels and almost for the 4 kinds of CTR sections. We use the development samples
+as validation dataset to evaluate the performance of the Models.
 
-\begin{table}[!h]
+
+\begin{table}[t]
     \centering
     \caption{Section and Label Distribution of the Training and Validation Dataset, showing
              an almost equal distribution torough the four Sections.}
@@ -50,8 +50,13 @@ as validation dataset to evaluate the performance of the Models.
     \end{tabular}
 \end{table}
 
-\newpage
 
+\begin{figure}[!b]
+    \centering
+    \includesvg[inkscapelatex=false, width=\textwidth]{./content/histogram}
+    \caption{Histogram of Number of Words from the full Sentence and the tokenized version with BertTokenizer, 
+             with 70\% are in line of 512 Tokens for both.}\label{cap:hist}
+\end{figure}
 
 For our further proceeding we concatenate the parts of a dataset sample as followed in Equation~\ref{eq:ds-sentence}.
 The Single-Type, where there is no Second Trial (see Table~\ref{tab:ds-example}), $s_1, s_2, ... $
@@ -73,11 +78,3 @@ we have analyzed the length Distribution in a Histogram (see Figure~\ref{cap:his
 Round about 70\% of all Training and Validation Datapoints are in the range of the $512$ token length. 
 Visible is also the slight shift on the $x$-Axis in the tokenized form, since not every word can have a single token
 representing it.
-
-\begin{figure}[!htb]
-    \hspace*{-4.5cm}
-    \centering
-    \includesvg[inkscapelatex=false, width=1.65\textwidth]{./content/histogram}
-    \caption{Histogram of Number of Words from the full Sentence and the tokenized version with BertTokenizer, 
-             whith 70\% are in line of 512 Tokens for both.}\label{cap:hist}
-\end{figure}

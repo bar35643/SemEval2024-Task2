@@ -47,7 +47,6 @@ Therefore, we can focus the Experiments on implementing strategies to enhance BE
 
 
 
-\newpage
 \subsection{Learning Rate}
 
 In the evaluation of the Baseline BertModelForSentenceClassification, different Learning-Rate 
@@ -81,7 +80,7 @@ tasks using the BERT model.
     7e-6                                                 & \multicolumn{1}{c|}{0.644} & \multicolumn{1}{c|}{0.563} & \multicolumn{1}{c|}{0.657} & 0.655 & 0.621 $\pm$ 0.040                                    \\ \hline
     \end{tabular}
 \end{table}
-
+\vspace{-0.5cm}
 
 
 
@@ -94,16 +93,6 @@ tasks using the BERT model.
 
 
 \subsection{Permutation}
-As described above changing Token size does lead to destroying the embeddings due to newly
-initializing and the fact that the maximum token size is 512, we come up with the idea
-of permuting the Primary and Secondary Trials (see Equation~\ref{eq:permutate}), which can be seen as list of items.
-The Target to analyze is if the order of the elements is relevant for deciding the Prediction, 
-wich should not be relevant due to BERT's Architecture, and
-if information after the cutpoint has interesting and relevant facts, which influences
-the decision making process. With no permutation the 
-Sentence is only 512 tokens long with the first-come-first-serve principle. Permutation on
-indicates that the order is not significant.
-
 \begin{equation}\label{eq:permutate}
     \resizebox{0.91\hsize}{!}{%
      $Sentence = [CLS] \; \textcolor{red}{stm}\;
@@ -114,12 +103,17 @@ indicates that the order is not significant.
     }
 \end{equation}
 
+As described above changing Token size does lead to destroying the embeddings due to newly
+initializing and the fact that the maximum token size is 512, we come up with the idea
+of permuting the Primary and Secondary Trials (see Equation~\ref{eq:permutate}), which can be seen as list of items.
+The Target to analyze is if the order of the elements is relevant for deciding the Prediction, 
+wich should not be relevant due to BERT's Architecture, and
+if information after the cutpoint has interesting and relevant facts, which influences
+the decision making process. With no permutation the 
+Sentence is only 512 tokens long with the first-come-first-serve principle. Permutation on
+indicates that the order is not significant.
 
-The Results (see Table~\ref{tab:my-permutation}) showed that there can be a slight Performance boost and the standard deviation is lower
-indicating that the fluctuation of different seeds in not that harsh. But, the Runtime cost of permuting the
-sentences every Batch is for the later Experiments too much. Therefore, we skip it to stay cost-efficient.
-
-\begin{table}[t]
+\begin{table}[!t]
     \centering
     \caption{F1 Values of the Permutation trial on the Baseline Model from the last (50th) Epoch}
     \label{tab:my-permutation}
@@ -131,6 +125,10 @@ sentences every Batch is for the later Experiments too much. Therefore, we skip 
                                    & Yes                          & \multicolumn{1}{c|}{0.633} & \multicolumn{1}{c|}{0.652} & \multicolumn{1}{c|}{0.620} & 0.643 & \textbf{0.643 $\pm$ 0.016}      \\ \hline
     \end{tabular}
 \end{table}
+
+The Results (see Table~\ref{tab:my-permutation}) showed that there can be a slight Performance boost and the standard deviation is lower
+indicating that the fluctuation of different seeds in not that harsh. But, the Runtime cost of permuting the
+sentences every Batch is for the later Experiments too much. Therefore, we skip it to stay cost-efficient.
 
 
 
@@ -147,13 +145,7 @@ sentences every Batch is for the later Experiments too much. Therefore, we skip 
 
 \subsection{Dataset Expansion}\label{ch:ds}
 
-We have tested the two Dataset Expansion Strategies CombinedLoader (CombDL) and CombinedDataset (CombDS)
-on two phases with the expasion Datasets SNLI, HEALTHVER and SCIFACT. The first Stage 
-is combining one Dataset with SemEval Training and testing the performance only on SemEval
-Validation. The second Stage including two datasets from the list and doing the same
-Training and Validation as before. 
-
-\begin{table}[!tbh]
+\begin{table}[!b]
     \centering
     \caption{F1 Values of the Dataset Expansion Test of Last (50th) Epoch for the different Startegies and Datasets, which are expanding SemEval. The Values are the SemEval only Validation.}
     \label{tab:my-dsexp}
@@ -185,6 +177,13 @@ Training and Validation as before.
     \end{tabular}%
     }
 \end{table}
+
+We have tested the two Dataset Expansion Strategies CombinedLoader (CombDL) and CombinedDataset (CombDS)
+on two phases with the expasion Datasets SNLI, HEALTHVER and SCIFACT. The first Stage 
+is combining one Dataset with SemEval Training and testing the performance only on SemEval
+Validation. The second Stage including two datasets from the list and doing the same
+Training and Validation as before. 
+
 
 The Results (see Table~\ref{tab:my-dsexp}) showed that the CombinedLoader Strategy is worse than the Baseline, 
 which indicates that the model has generalization issues if the dataset is present
@@ -254,18 +253,18 @@ help to improve the Metric-Scores on the Text Entailment Task.
 As said in Chapter~\ref{ch:adapter}, we are testing this Principle on SimCSE objective trained 
 BERT Model and on general pre-trained BERT overridden the BertModelForSentenceClassification Class. Firstly the Adapter version of the general 
 pre-trained BERT is around 2\% Points worse, which indicates that the remaining
-trainable Parameters are not enough to get a meaningful representation for the Classification-Layer.
+trainable Parameters are not enough to get a meaningful representation for the Classification-Layer (see Table~\ref{tab:my-adapt}).
 On the opposite side, taking the supervised fine-tuned SimCSE Model, which is trained on SNLI data, 
 also a Text Entailment Task, shows a Performance boos from 1.5-2\% in F1 Score. Therefore, 
 is important that the task correlate to each other, so the normal Layer of the BERT 
 already have a good representation saved in the Tensor and the Adapter Layer only has to align these.
 
 
-\begin{table}[h]
+\begin{table}[!t]
     \centering
     \caption{F1 Values of the Adapter Trial from the Last (50th) Epoch for the general BERT Model and
              the supervise SimCSE objective trained BERT}
-    \label{tab:my-table}
+    \label{tab:my-adapt}
     \begin{tabular}{|l||cccc|c|}
     \hline
     \multicolumn{1}{|c||}{\multirow{2}{*}{Model}} & \multicolumn{4}{c|}{Seed}                                                                    & \multirow{2}{*}{mean $\pm$ std} \\ \cline{2-5}
