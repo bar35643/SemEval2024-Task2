@@ -251,10 +251,20 @@ help to improve the Metric-Scores on the Text Entailment Task.
 \newpage
 \subsection{Adapter}
 
+As said in Chapter~\ref{ch:adapter}, we are testing this Principle on SimCSE objective trained 
+BERT Model and on general pre-trained BERT overridden the BertModelForSentenceClassification Class. Firstly the Adapter version of the general 
+pre-trained BERT is around 2\% Points worse, which indicates that the remaining
+trainable Parameters are not enough to get a meaningful representation for the Classification-Layer.
+On the opposite side, taking the supervised fine-tuned SimCSE Model, which is trained on SNLI data, 
+also a Text Entailment Task, shows a Performance boos from 1.5-2\% in F1 Score. Therefore, 
+is important that the task correlate to each other, so the normal Layer of the BERT 
+already have a good representation saved in the Tensor and the Adapter Layer only has to align these.
+
 
 \begin{table}[h]
     \centering
-    \caption{F1 Values of the Adapter Trial from the Last (50th) Epoch}
+    \caption{F1 Values of the Adapter Trial from the Last (50th) Epoch for the general BERT Model and
+             the supervise SimCSE objective trained BERT}
     \label{tab:my-table}
     \begin{tabular}{|l||cccc|c|}
     \hline
@@ -262,8 +272,8 @@ help to improve the Metric-Scores on the Text Entailment Task.
     \multicolumn{1}{|c||}{}                       & \multicolumn{1}{c|}{0}     & \multicolumn{1}{c|}{42}    & \multicolumn{1}{c|}{1998}  & 1M    &                                 \\ \hline\hline
     Baseline BERT                                 & \multicolumn{1}{c|}{0.636} & \multicolumn{1}{c|}{0.640} & \multicolumn{1}{c|}{0.638} & 0.657 & 0.630 $\pm$ 0.026               \\ \hline
     Adapter BERT                                  & \multicolumn{1}{c|}{0.619} & \multicolumn{1}{c|}{0.587} & \multicolumn{1}{c|}{0.602} & 0.626 & 0.608 $\pm$ 0.015               \\ \hline
-    Baseline SIMCSE                               & \multicolumn{1}{c|}{0.598} & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.696} & 0.640 & \textbf{0.650 $\pm$ 0.036}               \\ \hline
-    Adapter SIMCSE                                & \multicolumn{1}{c|}{0.643} & \multicolumn{1}{c|}{0.673} & \multicolumn{1}{c|}{0.615} & 0.654 & 0.646 $\pm$ 0.021      \\ \hline
+    Baseline SimCSE                               & \multicolumn{1}{c|}{0.598} & \multicolumn{1}{c|}{0.667} & \multicolumn{1}{c|}{0.696} & 0.640 & \textbf{0.650 $\pm$ 0.036}               \\ \hline
+    Adapter SimCSE                                & \multicolumn{1}{c|}{0.643} & \multicolumn{1}{c|}{0.673} & \multicolumn{1}{c|}{0.615} & 0.654 & 0.646 $\pm$ 0.021      \\ \hline
     \end{tabular}
 \end{table}
 
